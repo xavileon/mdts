@@ -49,7 +49,7 @@ EOF
 cd $WORKSPACE/mdts/mdts2/tests/functional_tests/
 
 
-PYTHONPATH=../../../ nosetests -vv --with-xunit --xunit-file=$WORKSPACE/logs/nosetests.xml
+sudo PYTHONPATH=../../../ nosetests -vv --with-xunit --xunit-file=$WORKSPACE/logs/nosetests.xml
 EXIT_CODE=$?
 
 # copy log file to archive
