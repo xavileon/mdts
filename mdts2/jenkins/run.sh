@@ -31,6 +31,7 @@ cd devstack
 
 export MIDONET_ENABLE_Q_SVC_ONLY=True
 export LOG_COLOR=False
+export LOGDIR=$WORKSPACE/logs
 export SCREEN_LOGDIR=$WORKSPACE/logs
 
 cat > local.conf <<EOF
