@@ -33,6 +33,7 @@ export MIDONET_ENABLE_Q_SVC_ONLY=True
 export LOG_COLOR=False
 export LOGDIR=$WORKSPACE/logs
 export SCREEN_LOGDIR=$WORKSPACE/logs
+export LOGFILE=$LOGDIR/stack.sh.log
 
 cat > local.conf <<EOF
 #!/usr/bin/env bash
