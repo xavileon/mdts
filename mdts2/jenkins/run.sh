@@ -19,6 +19,8 @@ MIDONET_TARGET_VERSION=$1
 
 if [ "$MIDONET_TARGET_VERSION" == "midonet1" ] ; then
     PLUGIN_SETTING="http://github.com/tomoe/networking-midonet.git midonet1"
+    export NEUTRON_REPO=http://github.com/tomoe/neutron
+    export NEUTRON_BRANCH=midonet1
 else
     PLUGIN_SETTING="http://github.com/stackforge/networking-midonet.git"
 fi
