@@ -49,6 +49,9 @@ EOF
 
 ./stack.sh
 
+if [ "$MIDONET_TARGET_VERSION" == "midonet1" ] ; then
+    sudo sed -i  's/\(enabled = \)true/\1false/'  /etc/midolman/midolman.conf
+fi
 
 cd $WORKSPACE/mdts/mdts2/tests/functional_tests/
 
