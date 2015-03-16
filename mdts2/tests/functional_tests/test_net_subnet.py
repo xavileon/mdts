@@ -15,7 +15,6 @@
 
 import logging
 from datetime import datetime
-from neutronclient.neutron import client
 
 from mdts2.framework.host import Host
 from mdts2.framework.neutron import get_neutron_client
@@ -34,31 +33,15 @@ def setup():
 def teardown():
     pass
 
-def test_ping_between_two_vms():
-    #
-    # Title: basic L2 connectivity in Neutron network
-    #
-    # When: there is a neutron network on which there are 2 neutron ports
-    # Then: spwan VMs for each port
-    # Then: VMs can ping to each other
-    #
-    # Virtual Topology:
-    #
-    # TODO: visualize the topology
-    #
 
+def setup_virtual(test_id):
 
-    test_id = 'mdts2_test_ping_between_two_vms' + datetime.now().strftime(
-            '%Y-%m-%d %H:%M:%S')
-    logging.info('Starting a test %s', test_id)
+    """
 
-
+    :rtype : dictionary that contains virtual topology
+    """
     tenant_id = test_id
     name = 'test_ping_between_two_vms'
-
-    #
-    # Topology setup
-    #
 
     # create network and subnet
     net_data = {'name': name, 'tenant_id': tenant_id}
@@ -86,20 +69,53 @@ def test_ping_between_two_vms():
     vm1 = hosts[0].create_vm('vm1', port1)
     vm2 = hosts[0].create_vm('vm2', port2)
 
-    # Test:
-    # make sure that vm1 cna vm2 can ping each other
+    return {'networks': [net],
+            'subnets': [subnet], 'ports': [port1, port2],
+            'vms': [vm1, vm2]}
+
+
+def teardown_virtual(virtual_topology):
+    """
+
+    :rtype : None
+    """
+    assert virtual_topology
+
+    for vm in virtual_topology['vms']:
+        vm.delete()
+
+    for p in virtual_topology['ports']:
+        neutron.delete_port(p['port']['id'])
+
+    for n in virtual_topology['networks']:
+        neutron.delete_network(n['network']['id'])
+
+def test_ping_between_two_vms():
     #
+    # Title: basic L2 connectivity in Neutron network
+    #
+    # When: there is a neutron network on which there are 2 neutron ports
+    # Then: spawn VMs for each port
+    # Then: VMs can ping to each other
+    #
+    # Virtual Topology:
+    #
+    # TODO: visualize the topology
+    #
+
+
+    test_id = 'mdts2_test_ping_between_two_vms' + datetime.now().strftime(
+        '%Y-%m-%d %H:%M:%S')
+    logging.info('Starting a test %s', test_id)
+
+    vt = setup_virtual(test_id)
+    vm1 = vt['vms'][0]
+    vm2 = vt['vms'][1]
+
+
     vm1.assert_pings_to(vm2)
     vm2.assert_pings_to(vm1)
 
-    #
-    # teardown VMs and neutron
-    #
-    vm1.delete()
-    vm2.delete()
 
-    # tearing down neutron ports and network
-    neutron.delete_port(port1['port']['id'])
-    neutron.delete_port(port2['port']['id'])
-    neutron.delete_network(network_id)
+    teardown_virtual(vt)
 
